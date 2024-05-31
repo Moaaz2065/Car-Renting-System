@@ -1,0 +1,84 @@
+
+for normal user use username : john_doe , password : password123
+for admin user user username : admin_user , password : adminpassword
+
+//SCRIPT
+===============
+
+
+CREATE TABLE programuser (
+    USER_ID Number PRIMARY KEY,
+    USERNAME VARCHAR(50),
+    PASSWORD VARCHAR(50)
+);
+CREATE TABLE customer (
+    USER_ID Number PRIMARY KEY,
+    BALANCE Number
+);
+CREATE TABLE admin (
+    USER_ID Number PRIMARY KEY
+);
+CREATE TABLE car (
+    CAR_ID Number PRIMARY KEY,
+    MODEL_NAME VARCHAR(50),
+    PRICE Number,
+    STATE VARCHAR(1),
+    PURCHASED_PRICE Number
+);
+CREATE TABLE reservation (
+    CAR_ID Number PRIMARY KEY,
+    USER_ID Number not NULL,
+    START_DATE DATE,
+    END_DATE DATE
+);
+
+CREATE OR REPLACE PROCEDURE GETMAXID (
+    p_mx_id OUT NUMBER
+)
+AS
+BEGIN
+    SELECT MAX(user_id) INTO p_mx_id FROM programuser;
+END;
+
+create or replace PROCEDURE My_Rents (
+    u_id IN NUMBER,
+    CID OUT SYS_REFCURSOR
+) AS
+BEGIN
+    OPEN CID FOR
+        SELECT cr.model_name, r.start_date, r.end_date
+        FROM car cr, reservation r
+        WHERE r.user_id = u_id AND cr.car_id = r.car_id;
+END;
+
+INSERT INTO car VALUES
+(1, 'Toyota Camry', 25000, 'A', 100000);
+INSERT INTO car VALUES
+(2, 'Honda Civic', 22000, 'A', 90000);
+INSERT INTO car VALUES
+(3, 'Ford Mustang', 35000, 'A', 150000);
+INSERT INTO car VALUES
+(4, 'Chevrolet', 28000, 'A', 120000);
+INSERT INTO car VALUES
+(5, 'BMW 3 Series', 40000, 'A', 290000);
+INSERT INTO car VALUES
+(6, 'Toyota', 20000, 'A', 100000);
+INSERT INTO car VALUES
+(7, 'Toyota', 26000, 'A', 110000);
+INSERT INTO programuser VALUES
+(1, 'john_doe', 'password123');
+INSERT INTO programuser VALUES
+(2, 'jane_smith', 'qwerty456');
+INSERT INTO programuser Values
+(3, 'admin_user', 'adminpassword');
+INSERT INTO admin VALUES
+(3);
+INSERT INTO customer VALUES
+(1, 100000);
+INSERT INTO customer VALUES
+(2, 20000);
+INSERT INTO reservation VALUES
+(1, 1, TO_DATE('02-FEB-24'), TO_DATE('03-MAR-24'));
+INSERT INTO reservation VALUES
+(2, 2, TO_DATE('26-JAN-24'), TO_DATE('25-FEB-24'));
+
